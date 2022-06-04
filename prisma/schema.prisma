@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Nutricionist {
+  id    Int    @id @default(autoincrement())
+  name  String
+  phone String
+  email String @unique
+  cnn   String @unique
+
+  clients Client[]
+}
+
+model Client {
+  id    Int    @id @default(autoincrement())
+  name  String
+  phone String
+  email String @unique
+
+  nutricionist   Nutricionist @relation(fields: [nutricionistId], references: [id])
+  nutricionistId Int
+
+  avaliations Avaliation[]
+
+  diets Diet[]
+}
+
+model Avaliation {
+  id     Int      @id @default(autoincrement())
+  weight Float
+  mmc    Float
+  size   Float
+  fat    Float
+  date   DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
+}
+
+// TODO: define fields and relations
+model Diet {
+  id       Int    @id @default(autoincrement())
+  calories Float
+  type     String
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
+
+  meals MealDiet[]
+}
+
+// TODO: define fields and relations
+model Meal {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  diets MealDiet[]
+
+  foods FoodMeal[]
+}
+
+model Food {
+  id       Int    @id @default(autoincrement())
+  name     String
+  calories Float
+
+  meals FoodMeal[]
+}
+
+model MealDiet {
+  id     Int  @id @default(autoincrement())
+  diet   Diet @relation(fields: [dietId], references: [id])
+  dietId Int
+  meal   Meal @relation(fields: [mealId], references: [id])
+  mealId Int
+}
+
+model FoodMeal {
+  id Int @id @default(autoincrement())
+
+  food   Food @relation(fields: [foodId], references: [id])
+  foodId Int
+  meal   Meal @relation(fields: [mealId], references: [id])
+  mealId Int
+}
