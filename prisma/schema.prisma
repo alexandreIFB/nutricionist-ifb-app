@@ -24,7 +24,19 @@ model Client {
 
   avaliations Avaliation[]
 
+  appointments Appointment[]
+
   diets Diet[]
+}
+
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  dateAndTime DateTime
+
+  avaliation Avaliation?
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
 }
 
 model Avaliation {
@@ -37,6 +49,9 @@ model Avaliation {
 
   client   Client @relation(fields: [clientId], references: [id])
   clientId Int
+
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  appointmentId Int         @unique
 }
 
 // TODO: define fields and relations
@@ -70,9 +85,11 @@ model Food {
 }
 
 model MealDiet {
-  id     Int  @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   diet   Diet @relation(fields: [dietId], references: [id])
   dietId Int
+
   meal   Meal @relation(fields: [mealId], references: [id])
   mealId Int
 }
@@ -82,6 +99,7 @@ model FoodMeal {
 
   food   Food @relation(fields: [foodId], references: [id])
   foodId Int
+
   meal   Meal @relation(fields: [mealId], references: [id])
   mealId Int
 }
